@@ -1,16 +1,18 @@
 from functools import cached_property
 from typing import Union
+from pathlib import Path
 
-from pinstripe.ops.stat import StatInfo
+from .stat import StatInfo
+from ..graph import Node, Result
 
-from ..node import Node, Result
-
-class Entity(Node):
-    def __init__(self, context, *, path, label=None):
-        name = name or f"Entity: {path}"
+class Entity(Node['Entity', str]):
+    def __init__(self, context, *, path: Path, label=None):
+        label = label or f"Entity: {path}"
         super().__init__(context=context, label=label)
         self._path = path
         self._state = "exists"
+        self._owner = None
+        self._mode = None
 
     def exists(self) -> 'Entity':
         self._state = "exists"

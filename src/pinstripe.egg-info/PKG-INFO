@@ -1,0 +1,13 @@
+Metadata-Version: 2.1
+Name: pinstripe
+Version: 0.0.1
+Summary: Fast, expressive provisioning of local and remote hosts
+Home-page: https://github.com/pytown/pinstripe
+Author: Chris Carpita
+Author-email: ccarpita@gmail.com
+Project-URL: Bug Tracker, https://github.com/pytown/pinstripe/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown

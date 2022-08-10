@@ -1,6 +1,6 @@
 DEFAULT_GROUP_NAME = "__default__"
 
-HOST_GROUPS = {}
+HOST_GROUPS: dict[str, list[str]] = {}
 
 def _parse_hostlist(hostlist: str) -> list[str]:
     return [h for h in hostlist.splitlines() if h]
@@ -13,3 +13,5 @@ def add_hostgroup(name, hosts):
 
 def add_default_hostgroup(hosts):
     add_hostgroup(DEFAULT_GROUP_NAME, hosts)
+
+add_default_hostgroup(["localhost"])

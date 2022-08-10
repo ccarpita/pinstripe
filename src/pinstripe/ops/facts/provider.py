@@ -1,5 +1,5 @@
 from ..fact_registry import FactRegistry
-from ..node import Node
+from ...graph import Node
 from ...result import Result
 
 class Provider(Node):

@@ -1,13 +1,15 @@
-from node import Node
 from typing import Mapping
 
+from ..graph import Node
 from ..result import Result
 
-class FactRegistry(Node):
-    def __post_init__(self):
+class FactRegistry(Node['FactRegistry', dict[str, str]]):
+    def __init__(self, context):
+        super().__init__(context, label="FactRegistry")
         self._fact_providers: Mapping[str, Node] = {}
         self._result_cache: Mapping[str, Result] = {}
         self._needs_facts: set[str] = set()
+        self._label = "FactRegistry"
 
     def register_provider(self, name: str, provider: Node):
         self._fact_providers[name] = provider
@@ -23,7 +25,7 @@ class FactRegistry(Node):
             if not self.has_provider(name):
                 return Result(ok=False, rc=1, reason=f"No provider found for {name}")
         for name in self._needs_facts:
-            self._fact_providers[name].run()
+            self._fact_providers[name].start()
         facts: dict[str, str] = {}
         for name in self._needs_facts:
             value = self.get(name)

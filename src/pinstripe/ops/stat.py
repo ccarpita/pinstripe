@@ -1,6 +1,7 @@
-from ..node import Node
+from pathlib import Path
+
+from ..graph import Node
 from ..result import Result
-from ..context import Context
 
 
 class StatInfo:
@@ -12,12 +13,12 @@ class StatInfo:
         self.size = size
 
 
-class Stat(Node[StatInfo]):
-    def __init__(self, context: Context, *, path: str, label: str = ""):
-        super().__init__(label, context, label=label)
+class Stat(Node['Stat', StatInfo]):
+    def __init__(self, context, *, path: Path, label: str = ""):
+        super().__init__(context, label=label)
         self._path = path
 
-    def execute(self) -> Result[StatInfo]:
+    def execute(self, *results: Result) -> Result[StatInfo]:
         path = self._path
         stat = self.execute_command(
             f"""
