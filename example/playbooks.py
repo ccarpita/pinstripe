@@ -22,6 +22,8 @@ def example_playbook(ctx: Context):
 
     ctx.run("sw_vers").ignore_failures()
 
+    ctx.scoped(os="debian").run("lsb_release")
+
     mac_defaults = MacosDefaults(ctx)
     mac_defaults.set("Apple Global Domain", "com.apple.trackpad.forceClick", 1)
 

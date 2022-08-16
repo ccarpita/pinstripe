@@ -14,6 +14,10 @@ class Provider(Node):
     to the first line of output lowercased with whitespace stripped.
     """
 
+    def __init__(self, context, label: str = ""):
+        label = label or f"Provider: {self.NAME} via {self.COMMAND}"
+        super().__init__(context, label)
+
     def register(self, facts: FactRegistry):
         facts.register_provider(self.NAME, self)
 

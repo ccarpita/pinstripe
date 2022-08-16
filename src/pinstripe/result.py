@@ -21,3 +21,6 @@ class Result(Generic[T]):
         self.stdout = stdout or []
         self.stderr = stderr or []
         self.value = value
+
+    def __str__(self) -> str:
+        return f"(ok={self.ok}, changed={self.changed}, value={self.value})"

@@ -1,6 +1,8 @@
 from typing import Optional, Union
 import subprocess
 
+from pinstripe.ops.noop import Noop
+
 from .ops.command import Command
 from .ops.file import File
 from .ops.directory import Directory
@@ -27,6 +29,7 @@ class Context:
         self.parent = parent
         self.children: list["Context"] = []
         self.scope = scope
+        self.root_node = Noop(self)
         if parent:
             parent.children.append(self)
             self._facts = None
@@ -61,12 +64,12 @@ class Context:
 
     def file(self, path, label: str = "") -> File:
         node = File(context=self, path=path, label=label)
-        self.nodes.append(node)
+        node.depends_on(self.root_node)
         return node
 
     def stat(self, path, label: str = "") -> Stat:
         stat = Stat(context=self, path=path, label=label)
-        self.nodes.append(stat)
+        stat.depends_on(self.root_node)
         return stat
 
     def run(self, command: CommandT) -> Command:
@@ -74,6 +77,7 @@ class Context:
         Create and return a Command node
         """
         cmd = Command(context=self, command=command)
+        cmd.depends_on(self.root_node)
         return cmd
 
     def directory(self, path, label=None) -> Directory:
@@ -81,6 +85,7 @@ class Context:
         Create and return a Directory node
         """
         node = Directory(context=self, label=label, path=path)
+        node.depends_on(self.root_node)
         return node
 
     def execute_sync(self, cmd: Union[str, list[str]]) -> subprocess.Popen:

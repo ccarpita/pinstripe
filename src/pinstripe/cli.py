@@ -1,4 +1,5 @@
 import argparse
+from re import I
 import sys
 import time
 
@@ -31,25 +32,55 @@ def cli():
     for node in Node.all():
         node.start()
 
-    # Draw progress graph and status lines
-    while any([not n.is_finished for n in Node.all()]):
+    node_statusline: dict[Node, str] = {}
+    def print_stats():
         num_ok = 0
         num_failed = 0
         num_waiting = 0
         num_running = 0
         num_soft_failed = 0
+        num_changed = 0
+        num_skipped = 0
+        result = None
         for node in Node.all():
+            if node.__class__.__name__ == "Noop":
+                continue
+            status = "UNKNOWN"
             if node.is_finished:
-                result = node.wait()
-                if result.ok:
+                result = node._result
+                if result.skipped:
+                    num_skipped += 1
+                    status = "SKIPPED"
+                    print(f"[SKIPPED] {node} {result}")
+                elif result.ok:
                     num_ok += 1
+                    status = "OK"
                 elif node.can_fail:
                     num_soft_failed += 1
+                    status = "SOFT-FAILED"
                 else:
                     num_failed += 1
+                    status = "FAILED"
+                if result.changed:
+                    num_changed += 1
+                    status = "CHANGED"
             elif node.is_waiting:
                 num_waiting += 1
+                status = "WAITING"
             elif node.is_running:
                 num_running += 1
-        print(f"Running: {num_running}, Waiting: {num_waiting}, Failed: {num_failed}, Soft Failed: {num_soft_failed}, OK: {num_ok}")
-        time.sleep(0.2)
+                status = "RUNNING"
+            result_desc = ""
+            if node.is_finished:
+                result_desc = f" {node.wait()}"
+                statusline = f"[{status}] {node}{result_desc}"
+                if node not in node_statusline or node_statusline[node] != statusline:
+                    print(statusline)
+                    node_statusline[node] = statusline
+        print(f"Running: {num_running}, Waiting: {num_waiting}, Failed: {num_failed}, Soft Failed: {num_soft_failed}, OK: {num_ok}, Changed: {num_changed}, Skipped: {num_skipped}")
+
+    # Draw progress graph and status lines
+    while any([not n.is_finished for n in Node.all()]):
+        print_stats()
+        time.sleep(0.1)
+    print_stats()

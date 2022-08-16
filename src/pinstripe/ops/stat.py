@@ -12,9 +12,13 @@ class StatInfo:
         self.path = path
         self.size = size
 
+    def __str__(self) -> str:
+        return f"Stat(path={self.path}, size={self.size}, is_link={self.is_link})"
+
 
 class Stat(Node['Stat', StatInfo]):
     def __init__(self, context, *, path: Path, label: str = ""):
+        label = label or f'Stat: {path}'
         super().__init__(context, label=label)
         self._path = path
 

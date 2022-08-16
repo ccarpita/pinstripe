@@ -183,9 +183,6 @@ class Node(Generic[NodeT, ResultT]):
             self.start()
         with self._join_lock:
             if self._thread and not self._joined:
-                while not self._thread.is_alive():
-                    import time
-                    time.sleep(1)
                 self._thread.join()
                 self._joined = True
         return self._result

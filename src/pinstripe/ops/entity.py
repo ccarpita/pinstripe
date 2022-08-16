@@ -37,4 +37,4 @@ class Entity(Node['Entity', str]):
 
     @cached_property
     def stat(self) -> Result[StatInfo]:
-        return self._context.stat(self._path).wait()
+        return self._context.stat(self._path).ignore_failures().wait()

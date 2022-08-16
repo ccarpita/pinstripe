@@ -8,7 +8,7 @@ class Directory(Entity):
         label = label or f"Directory: {path}"
         super().__init__(context=context, path=path, label=label)
 
-    def execute(self) -> Result:
+    def execute(self, *result: Result) -> Result:
         stat = self.stat
 
         if not stat.ok:
